@@ -1,6 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <context:annotation-config/>
+    <bean id="writeConcern" class="com.mongodb.WriteConcern">
+        <!-- 对应全局的WriteConcern中的w，默认为0 -->
+        <constructor-arg name="w" value="0" />
+        <!-- 对应全局的WriteConcern中的wtimeout，默认为0 -->
+        <constructor-arg name="wTimeoutMS" value="0" />
+        <!-- 对应全局的WriteConcern.FSYNC_SAFE，如果为真，每次写入要等待写入磁盘，默认为false -->
+        <constructor-arg name="fsync" value="false" />
+        <!-- 对应全局的WriteConcern.JOURNAL_SAFE，如果为真，每次写入要等待日志文件写入磁盘，默认为false -->
+        <constructor-arg name="journal" value="false" />
+    </bean>
+
+    <!-- 使用工厂创建mongo实例 -->
+    <bean id="datastore" class="com.github.hezzhust.mongo.MongoDataStoreFactoryBean">
+        <!-- 设定服务器列表，默认为localhost:27017 -->
+        <property name="mongoServer" value="mongodb://localhost:27017/">
+        </property>
+        <!--数据库名-->
+        <property name="dbName" value="Hezz_Mongo_Example" />
+        <property name="mapName" value="com.hezz.example.model" />
+        <!-- 是否主读写都在主库 -->
+        <property name="readPreference" value="primary" />
+
+        <!-- 设定写策略，默认为WriteConcern.SAFE，优先级高于mongoOptions中的safe -->
+        <!--<property name="writeConcern" ref="writeConcern" />-->
+        <!--连接池最小数-->
+        <property name="minConnectionsPerHost" value="50" />
+        <!--连接池最大数-->
+        <property name="maxConnectionsPerHost" value="200" />
+        <!--可等待线程倍数 20*200个线程可以等待，更多的线程将直接抛出异常-->
+        <property name="threadsAllowedToBlockForConnectionMultiplier" value="20" />
+        <!-- 线程等待连接可用的最大时间(毫秒) -->
+        <property name="maxWaitTime" value="12000" />
+        <!--0表示不限制-->
+        <property name="maxConnectionIdleTime" value="0" />
+        <property name="maxConnectionLifeTime" value="0" />
+        <property name="connectTimeout" value="10000" />
+        <!-- socket读写时超时时间(毫秒)，默认为0，不超时 -->
+        <property name="socketTimeout" value="60000" />
+        <!-- 是socket连接在防火墙上保持活动的特性，默认为false -->
+        <property name="socketKeepAlive" value="true" />
+        <property name="enableBulkWrite" value="false" />
+        <!-- morphia相关配置 是否做映射的对象类校验 是否存空对象 或者null-->
+        <property name="ignoreInvalidClasses" value="false" />
+        <property name="storeEmpties" value="false" />
+        <property name="storeNulls" value="false" />
+
+        <!-- 是否进行index和caps的确认操作，默认为flase -->
+        <property name="toEnsureIndexes" value="true" /><!-- 是否确认索引存在，默认false -->
+        <!--<property name="toEnsureCaps" value="false" />&lt;!&ndash; 是否确认caps存在，默认false &ndash;&gt;-->
+    </bean>
 </beans>
