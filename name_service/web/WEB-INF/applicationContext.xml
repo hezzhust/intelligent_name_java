@@ -25,7 +25,7 @@
         <property name="mongoServer" value="mongodb://localhost:27017/">
         </property>
         <!--数据库名-->
-        <property name="dbName" value="Hezz_Mongo_Example" />
+        <property name="dbName" value="Hezz_IT_NAME" />
         <property name="mapName" value="com.hezz.example.model" />
         <!-- 是否主读写都在主库 -->
         <property name="readPreference" value="primary" />
